@@ -1,0 +1,11 @@
+version: 2
+
+sources:
+  - name: statfin_raw
+    catalog: data_academy_fi_06
+    schema: miika_statfin_bronze
+    tables:
+      - name: bronze_statfin_bankruptcies
+      - name: bronze_statfin_population
+      - name: bronze_statfin_establishments
+      - name: bronze_statfin_municipalities
