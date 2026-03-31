@@ -1,0 +1,35 @@
+version: 2
+
+models:
+  - name: dim_municipality
+    description: "County dimension based on StatFin's municipalities table"
+    columns:
+      - name: municipality_code
+        description: "Municipality code (PK)"
+        tests:
+          - unique
+          - not_null
+          
+  - name: fact_population
+    description: "Population fact table based on StatFin's population table"
+    columns:
+      - name: municipality_code
+        description: "Municipality code"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_municipality')
+              field: municipality_code
+      - name: population_total
+        description: "Total population at the end of the year"
+        tests:
+          - not_null
+
+  - name: dim_year
+    description: "Year dimension based on years found in the fact tables"
+    columns:
+      - name: year
+        description: "Year (PK)"
+        tests:  
+          - unique
+          - not_null
