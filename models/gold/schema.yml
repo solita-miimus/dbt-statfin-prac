@@ -18,8 +18,9 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('dim_municipality')
-              field: municipality_code
+              arguments:
+                to: ref('dim_municipality')
+                field: municipality_code
       - name: population_total
         description: "Total population at the end of the year"
         tests:
