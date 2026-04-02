@@ -1,9 +1,12 @@
+-- fact_establishments.sql
+-- Business establishments fact table. Grain: one row per municipality per year.
+-- Includes the count of establishments, personnel (staff-years), and turnover.
+-- municipality_code is resolved in the silver layer; no join needed here.
 SELECT
-    m.municipality_code,
-    e.year,
-    e.establishment_count,
-    e.personnel_staff_years,
-    e.turnover_1000e,
-    e.turnover_per_person_1000e
-FROM {{ ref('silver_statfin_establishments') }} e
-LEFT JOIN {{ ref('silver_statfin_municipalities') }} m ON e.municipality = m.municipality
+    municipality_code,
+    year,
+    establishment_count,
+    personnel_staff_years,
+    turnover_1000e,
+    turnover_per_person_1000e
+FROM {{ ref('silver_statfin_establishments') }}

@@ -2,35 +2,114 @@ version: 2
 
 models:
   - name: dim_municipality
-    description: "County dimension based on StatFin's municipalities table"
+    description: "Municipality dimension based on StatFin's municipalities table"
     columns:
       - name: municipality_code
         description: "Municipality code (PK)"
         tests:
           - unique
           - not_null
-          
-  - name: fact_population
-    description: "Population fact table based on StatFin's population table"
-    columns:
-      - name: municipality_code
-        description: "Municipality code"
+      - name: municipality
+        description: "Municipality name in Finnish"
         tests:
           - not_null
-          - relationships:
-              arguments:
-                to: ref('dim_municipality')
-                field: municipality_code
-      - name: population_total
-        description: "Total population at the end of the year"
-        tests:
-          - not_null
+      - name: wellbeing_county
+        description: "Wellbeing services county the municipality belongs to"
 
   - name: dim_year
     description: "Year dimension based on years found in the fact tables"
     columns:
       - name: year
         description: "Year (PK)"
-        tests:  
+        tests:
           - unique
+          - not_null
+
+  - name: dim_industry
+    description: "Industry dimension based on industry classifications in the bankruptcies data"
+    columns:
+      - name: industry
+        description: "Industry classification label (PK)"
+        tests:
+          - unique
+          - not_null
+
+  - name: fact_population
+    description: "Population fact table based on StatFin's population table. Grain: one row per municipality per year."
+    columns:
+      - name: municipality_code
+        description: "Municipality code (FK to dim_municipality)"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_municipality')
+                field: municipality_code
+      - name: year
+        description: "Year (FK to dim_year)"
+        tests:
+          - not_null
+      - name: population_total
+        description: "Total population at the end of the year"
+        tests:
+          - not_null
+      - name: births
+        description: "Number of live births during the year"
+        tests:
+          - not_null
+      - name: deaths
+        description: "Number of deaths during the year"
+        tests:
+          - not_null
+
+  - name: fact_establishments
+    description: "Establishment fact table based on StatFin's establishments table. Grain: one row per municipality per year."
+    columns:
+      - name: municipality_code
+        description: "Municipality code (FK to dim_municipality)"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_municipality')
+                field: municipality_code
+      - name: year
+        description: "Year (FK to dim_year)"
+        tests:
+          - not_null
+      - name: establishment_count
+        description: "Number of business establishments"
+        tests:
+          - not_null
+      - name: turnover_1000e
+        description: "Total turnover of establishments in EUR 1,000"
+      - name: turnover_per_person_1000e
+        description: "Turnover per person in EUR 1,000"
+
+  - name: fact_bankruptcies
+    description: "Bankruptcy fact table based on StatFin's bankruptcies table. Grain: one row per municipality per industry per year."
+    columns:
+      - name: municipality_code
+        description: "Municipality code (FK to dim_municipality)"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_municipality')
+                field: municipality_code
+      - name: industry
+        description: "Industry classification (FK to dim_industry)"
+        tests:
+          - not_null
+      - name: year
+        description: "Year (FK to dim_year)"
+        tests:
+          - not_null
+      - name: bankruptcies_count
+        description: "Number of enterprises that filed for bankruptcy"
+        tests:
+          - not_null
+      - name: personnel_at_risk
+        description: "Number of employees at bankrupt enterprises"
+        tests:
           - not_null
